@@ -1,4 +1,4 @@
-import { Body, Controller, Get, NotFoundException, Param, ParseUUIDPipe, Post, ValidationPipe } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, ParseUUIDPipe, Post, ValidationPipe } from "@nestjs/common";
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { validationOptions } from "src/app.constants";
 import { MessageEntity } from "src/data/message.entity";
@@ -43,12 +43,17 @@ export class ChatController {
         return message
     }
 
-    @Post()
+    @Post(":chatId/messages")
     @ApiCreatedResponse({ type: MessageReadDto })
     @ApiBadRequestResponse()
     async createMessage(
+        @Param("chatId", new ParseUUIDPipe()) chatId: string,
         @Body(new ValidationPipe(validationOptions)) messageAddDto: MessageAddDto
     ): Promise<MessageReadDto> {
+        if (chatId != messageAddDto.chatId) {
+            throw new BadRequestException()
+        }
+
         const messageEntity = new MessageEntity()
         messageEntity.chatId = messageAddDto.chatId
         messageEntity.senderId = messageAddDto.senderId
