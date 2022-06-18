@@ -1,3 +1,9 @@
 <mat-spinner *ngIf="!stream"></mat-spinner>
 <video #videoPlayer id="videoPlayer" controls autoplay playsinline></video>
 <h2 *ngIf="user">Stream by {{ user.name }}</h2>
+<p>Stream started on: {{ stream?.creationDate | date:'medium' }}</p>
+<p style="line-break: anywhere;">Signature: {{ stream?.userSignature }}</p>
+
+<hr>
+
+<chat *ngIf="user" [userId]="user.userId"></chat>

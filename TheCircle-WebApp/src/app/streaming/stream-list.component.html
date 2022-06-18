@@ -1,10 +1,10 @@
 <mat-spinner *ngIf="isLoading"></mat-spinner>
 <section *ngIf="!isLoading">
     <h4 *ngIf="streams!.length == 0">No active streams</h4>
-    <mat-card class="play-stream" *ngFor="let stream of streams" [routerLink]="['/streams', stream[0].streamId]">
+    <mat-card class="play-stream" *ngFor="let stream of streams" [routerLink]="['/streams', stream.streamId]">
         <img mat-card-image src="https://ak.picdn.net/shutterstock/videos/1015530859/thumb/1.jpg" alt="Stream banner">
         <mat-card-header>
-            <mat-card-title>Stream by {{ stream[1].name }}</mat-card-title>
+            <mat-card-title>Stream by {{ names.get(stream.userId) }}</mat-card-title>
         </mat-card-header>
     </mat-card>
 </section>
