@@ -7,6 +7,7 @@ import io.ktor.util.*
 import nl.marc.thecircle.data.api.AddUserCommand
 import nl.marc.thecircle.data.api.TheCircleUserApi
 import nl.marc.thecircle.utils.getOrNull
+import nl.marc.thecircle.utils.toPem
 import java.security.KeyPairGenerator
 import java.security.Signature
 
@@ -19,7 +20,7 @@ class UserRepository (
         keyPairGenerator.initialize(4096)
         val keyPair = keyPairGenerator.generateKeyPair()
 
-        val publicKeyString = keyPair.public.encoded.encodeBase64()
+        val publicKeyString = keyPair.public.toPem()
 
         val signature = Signature.getInstance("SHA512withRSA")
         signature.initSign(keyPair.private)
@@ -30,7 +31,7 @@ class UserRepository (
         )
 
         dataStore.edit {
-            it[PreferenceKeys.privateKey] = keyPair.private.encoded.encodeBase64()
+            it[PreferenceKeys.privateKey] = keyPair.private.toPem()
             it[PreferenceKeys.userId] = user.userId
             it[PreferenceKeys.userName] = user.name
         }

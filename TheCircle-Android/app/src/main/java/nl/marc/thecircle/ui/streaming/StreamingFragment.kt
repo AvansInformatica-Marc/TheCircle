@@ -56,10 +56,6 @@ class StreamingFragment : Fragment(), SurfaceHolder.Callback {
         lifecycleScope.launch {
             camera?.stopStream()
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
         viewModel.close()
     }
 

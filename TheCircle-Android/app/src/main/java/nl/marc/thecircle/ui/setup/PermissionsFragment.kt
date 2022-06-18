@@ -9,11 +9,20 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import nl.marc.thecircle.R
 import nl.marc.thecircle.databinding.FragmentPermissionsBinding
+import org.koin.androidx.navigation.koinNavGraphViewModel
 
 class PermissionsFragment : Fragment() {
     private lateinit var binding: FragmentPermissionsBinding
+
+    private val viewModel by koinNavGraphViewModel<PermissionsViewModel>(R.id.permissions_fragment)
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -54,6 +63,16 @@ class PermissionsFragment : Fragment() {
     }
 
     private fun onPermissionsGranted() {
-        findNavController().navigate(PermissionsFragmentDirections.fragmentPermissionsToStreaming())
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.hasSignedUp.collect {
+                    when (it) {
+                        true -> findNavController().navigate(PermissionsFragmentDirections.fragmentPermissionsToStreaming())
+                        false -> findNavController().navigate(PermissionsFragmentDirections.fragmentPermissionsToSignup())
+                        null -> {}
+                    }
+                }
+            }
+        }
     }
 }
