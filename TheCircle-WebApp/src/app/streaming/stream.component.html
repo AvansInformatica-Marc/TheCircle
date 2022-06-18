@@ -1,0 +1,3 @@
+<mat-spinner *ngIf="!stream"></mat-spinner>
+<video #videoPlayer id="videoPlayer" controls autoplay playsinline></video>
+<h2 *ngIf="user">Stream by {{ user.name }}</h2>

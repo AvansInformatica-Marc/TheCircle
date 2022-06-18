@@ -1,0 +1,72 @@
+version: '3'
+
+services:
+  streaming:
+    image: the_circle/rtsp-server:1.0
+    build: TheCircle-RtspServer
+    restart: on-failure
+    ports:
+      - '554:554'
+      - '8000:8000/udp'
+      - '8001:8001/udp'
+      - '8888:8888'
+      - '9997:9997'
+      - '9998:9998'
+
+  thecircle_db:
+    image: postgres:14-alpine
+    container_name: 'thecircle_db'
+    restart: on-failure
+    volumes:
+      - thecircle_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=@dministrat0r!
+      - POSTGRES_DB=thecircle
+
+  backend:
+    image: the_circle/backend:1.0
+    build: TheCircle-Server
+    restart: on-failure
+    ports:
+      - '3000:3000'
+    environment:
+      - POSTGRES_HOST=thecircle_db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=@dministrat0r!
+      - POSTGRES_DB=thecircle
+      - STREAM_HOST=192.168.1.246
+      - STREAM_RTSP_PORT=554
+      - STREAM_HLS_PORT=8888
+    depends_on:
+      - thecircle_db
+      - streaming
+
+  webapp:
+    image: the_circle/webapp:1.0
+    build:
+      context: TheCircle-WebApp
+      args:
+        - THECIRCLE_HOST=192.168.1.246
+        - THECIRCLE_PORT=3000
+    restart: on-failure
+    ports:
+      - '80:80'
+    depends_on:
+      - streaming
+      - backend
+
+  app:
+    image: the_circle/app:1.0
+    build:
+      context: TheCircle-Android
+      args:
+        - THECIRCLE_HOST=192.168.1.246
+        - THECIRCLE_PORT=3000
+    restart: on-failure
+    ports:
+      - '3100:80'
+
+volumes:
+  thecircle_data:

@@ -1,0 +1,11 @@
+<header>
+    <mat-toolbar color="primary" class="mat-elevation-z2">
+        <span routerLink="/">The Circle</span>
+        <span class="fill-space-horizontal"></span>
+        <span *ngIf="timestamp">{{ timestamp }}</span>
+    </mat-toolbar>
+</header>
+
+<main>
+    <router-outlet></router-outlet>
+</main>
