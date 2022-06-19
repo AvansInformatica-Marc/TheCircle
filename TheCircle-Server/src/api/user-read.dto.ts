@@ -1,5 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger"
-import { IsDateString, IsString, IsUUID } from "class-validator"
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
+import { IsDateString, IsOptional, IsString, IsUUID } from "class-validator"
 
 export class UserReadDto {
     @ApiProperty()
@@ -17,6 +17,11 @@ export class UserReadDto {
     @ApiProperty()
     @IsString()
     publicKey: string
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsString()
+    certificate?: string
 
     @ApiProperty()
     @IsString()

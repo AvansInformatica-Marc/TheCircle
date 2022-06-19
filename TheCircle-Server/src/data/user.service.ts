@@ -22,6 +22,11 @@ export class UserService {
         return this.userRepository.save(user)
     }
 
+    async addCertificate(user: UserEntity, cert: string): Promise<UserEntity> {
+        await this.userRepository.update({ userId: user.userId }, { certificate: cert })
+        return (await this.userRepository.findOneBy({ userId: user.userId })) ?? user
+    }
+
     async delete(userId: string): Promise<void> {
         await this.userRepository.delete({ userId })
     }
