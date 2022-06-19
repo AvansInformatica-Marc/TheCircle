@@ -1,11 +1,10 @@
 package nl.marc.thecircle.data
 
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import io.ktor.util.*
-import nl.marc.thecircle.data.api.RegisterStreamCommand
-import nl.marc.thecircle.data.api.Stream
+import nl.marc.thecircle.domain.RegisterStreamCommand
+import nl.marc.thecircle.domain.Stream
 import nl.marc.thecircle.data.api.TheCircleStreamApi
 import nl.marc.thecircle.utils.getOrNull
 import java.security.KeyFactory
@@ -20,31 +19,16 @@ class StreamRepository(
     suspend fun registerStream(): Stream {
         val userId = dataStore.getOrNull(PreferenceKeys.userId)!!
 
-        val privateKey = loadPrivateKey()
+        val privateKey = SignatureUtils.loadPrivateKey(dataStore)
 
-        val signature = Signature.getInstance("SHA512withRSA")
-        signature.initSign(privateKey)
-        signature.update("userId:${userId};".toByteArray())
+        val signature = SignatureUtils.sign("userId:$userId;", privateKey)
 
         return theCircleStreamApi.registerStream(
             RegisterStreamCommand(
                 userId,
-                signature.sign().encodeBase64()
+                signature.encodeBase64()
             )
         )
-    }
-
-    private suspend fun loadPrivateKey(): PrivateKey {
-        val privateKeyString = dataStore.getOrNull(PreferenceKeys.privateKey)!!
-
-        val privateKeyBytes = privateKeyString
-            .replace("-----BEGIN PRIVATE KEY-----", "")
-            .replace("-----END PRIVATE KEY-----", "")
-            .replace("[\\s\\r\\n]*".toRegex(), "")
-            .decodeBase64Bytes()
-        val secretKeySpec = PKCS8EncodedKeySpec(privateKeyBytes)
-        val keyFactory = KeyFactory.getInstance("RSA")
-        return keyFactory.generatePrivate(secretKeySpec)
     }
 
     suspend fun deleteStream(stream: Stream) {

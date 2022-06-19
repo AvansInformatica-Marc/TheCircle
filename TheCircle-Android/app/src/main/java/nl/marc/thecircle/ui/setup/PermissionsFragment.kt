@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import nl.marc.thecircle.R
 import nl.marc.thecircle.databinding.FragmentPermissionsBinding
+import nl.marc.thecircle.utils.observe
 import org.koin.androidx.navigation.koinNavGraphViewModel
 
 class PermissionsFragment : Fragment() {
@@ -55,6 +56,7 @@ class PermissionsFragment : Fragment() {
             onPermissionsGranted()
         } else {
             requestPermissionLauncher.launch(arrayOf(
+                Manifest.permission.INTERNET,
                 Manifest.permission.CAMERA,
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.READ_EXTERNAL_STORAGE
@@ -63,15 +65,11 @@ class PermissionsFragment : Fragment() {
     }
 
     private fun onPermissionsGranted() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.hasSignedUp.collect {
-                    when (it) {
-                        true -> findNavController().navigate(PermissionsFragmentDirections.fragmentPermissionsToStreaming())
-                        false -> findNavController().navigate(PermissionsFragmentDirections.fragmentPermissionsToSignup())
-                        null -> {}
-                    }
-                }
+        viewModel.hasSignedUp.observe(viewLifecycleOwner) {
+            when (it) {
+                true -> findNavController().navigate(PermissionsFragmentDirections.fragmentPermissionsToStreaming())
+                false -> findNavController().navigate(PermissionsFragmentDirections.fragmentPermissionsToSignup())
+                null -> {}
             }
         }
     }

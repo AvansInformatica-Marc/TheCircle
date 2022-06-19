@@ -4,17 +4,33 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import io.ktor.util.*
-import nl.marc.thecircle.data.api.AddUserCommand
+import nl.marc.thecircle.domain.AddUserCommand
 import nl.marc.thecircle.data.api.TheCircleUserApi
+import nl.marc.thecircle.domain.User
 import nl.marc.thecircle.utils.getOrNull
 import nl.marc.thecircle.utils.toPem
 import java.security.KeyPairGenerator
 import java.security.Signature
 
-class UserRepository (
+class UserRepository(
     private val dataStore: DataStore<Preferences>,
     private val theCircleUserApi: TheCircleUserApi
 ) {
+    private val userCache = mutableMapOf<String, User>()
+
+    suspend fun getUserById(userId: String): User? {
+        return userCache[userId] ?: try {
+            val user = theCircleUserApi.getUserById(userId)
+            if (userCache.size < 30) {
+                userCache[userId] = user
+            }
+            user
+        } catch (error: Throwable) {
+            error.printStackTrace()
+            null
+        }
+    }
+
     suspend fun register(name: String) {
         val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
         keyPairGenerator.initialize(4096)
@@ -22,12 +38,10 @@ class UserRepository (
 
         val publicKeyString = keyPair.public.toPem()
 
-        val signature = Signature.getInstance("SHA512withRSA")
-        signature.initSign(keyPair.private)
-        signature.update("name:${name};publicKey:${publicKeyString};".toByteArray())
+        val signature = SignatureUtils.sign("name:$name;publicKey:$publicKeyString;", keyPair.private)
 
         val user = theCircleUserApi.register(
-            AddUserCommand(name, publicKeyString, signature.sign().encodeBase64())
+            AddUserCommand(name, publicKeyString, signature.encodeBase64())
         )
 
         dataStore.edit {

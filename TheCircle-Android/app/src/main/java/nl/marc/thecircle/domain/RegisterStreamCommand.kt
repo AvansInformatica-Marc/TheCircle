@@ -1,4 +1,4 @@
-package nl.marc.thecircle.data.api
+package nl.marc.thecircle.domain
 
 import kotlinx.serialization.Serializable
 

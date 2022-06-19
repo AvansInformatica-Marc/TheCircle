@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.launch
 import nl.marc.thecircle.R
 import nl.marc.thecircle.databinding.FragmentSignupBinding
+import nl.marc.thecircle.utils.observe
 import org.koin.androidx.navigation.koinNavGraphViewModel
 
 class SignUpFragment : Fragment() {
@@ -29,15 +30,11 @@ class SignUpFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.hasSignedUp.collect {
-                    if (it) {
-                        findNavController().navigate(
-                            SignUpFragmentDirections.fragmentSignupToStreaming()
-                        )
-                    }
-                }
+        viewModel.hasSignedUp.observe(viewLifecycleOwner) {
+            if (it) {
+                findNavController().navigate(
+                    SignUpFragmentDirections.fragmentSignupToStreaming()
+                )
             }
         }
 
