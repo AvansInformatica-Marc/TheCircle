@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
+import { timer } from "rxjs";
 import { __classPrivateFieldIn } from "tslib";
 import { UsersService } from "../users/users.service";
 import { ChatService } from "./chat.service";
@@ -25,7 +26,11 @@ export class ChatComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.updateMessages()
+        timer(0, 3 * 1000).subscribe({
+            next: _ => {
+                this.updateMessages()
+            }
+        })
     }
 
     updateMessages() {

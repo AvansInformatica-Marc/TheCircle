@@ -19,7 +19,7 @@ class ChatRepository(
     val messageFlow: Flow<Set<Message>> = flow {
         while (true) {
             emit(getMessages())
-            delay(2.seconds)
+            delay(3.seconds)
         }
     }
 
