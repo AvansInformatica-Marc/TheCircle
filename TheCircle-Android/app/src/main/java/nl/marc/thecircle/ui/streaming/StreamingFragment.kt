@@ -44,6 +44,10 @@ class StreamingFragment : Fragment(), SurfaceHolder.Callback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.videoView.holder.addCallback(this)
 
+        binding.videoView.setOnClickListener {
+            camera?.switchCamera()
+        }
+
         binding.actionSend.setOnClickListener {
             binding.inputMessage.editText?.text?.toString()?.let {
                 if (it.isNotBlank()) {
