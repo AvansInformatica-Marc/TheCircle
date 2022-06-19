@@ -78,12 +78,12 @@ class StreamingFragment : Fragment(), SurfaceHolder.Callback {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
-
         lifecycleScope.launch {
             camera?.stopStream()
         }
         viewModel.close()
+
+        super.onDestroyView()
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {}
@@ -118,9 +118,11 @@ class StreamingFragment : Fragment(), SurfaceHolder.Callback {
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
         surfaceAvailable = false
+
         lifecycleScope.launch {
             camera?.stopStream()
         }
+        viewModel.close()
     }
 
     private fun setupCamera2(rtspClient: RtspClient): Boolean {

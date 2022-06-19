@@ -45,11 +45,7 @@ class StreamingViewModel(
 
     fun registerStream() {
         viewModelScope.launch(Dispatchers.IO) {
-            if(!userRepository.isRegistered()) {
-                userRepository.register("TestUser")
-            }
-
-            val stream = streamRepository.registerStream()
+            val stream = this@StreamingViewModel.stream ?: streamRepository.registerStream()
             this@StreamingViewModel.stream = stream
 
             mutableRtspClient.value = RtspClient.create(stream.rtspUrl) {
@@ -80,13 +76,13 @@ class StreamingViewModel(
 
     fun close() {
         viewModelScope.launch(Dispatchers.IO) {
+            val client = rtspClient.value
+            mutableRtspClient.value = null
             stream?.let {
+                stream = null
                 streamRepository.deleteStream(it)
             }
-        }
-
-        viewModelScope.launch(Dispatchers.IO) {
-            rtspClient.value?.closeAwait()
+            client?.closeAwait()
         }
     }
 

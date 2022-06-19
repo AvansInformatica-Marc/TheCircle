@@ -2,6 +2,7 @@ package nl.marc.thecircle.data.api
 
 import nl.marc.thecircle.domain.RegisterStreamCommand
 import nl.marc.thecircle.domain.Stream
+import retrofit2.Response
 import retrofit2.http.*
 
 interface TheCircleStreamApi {
@@ -9,5 +10,5 @@ interface TheCircleStreamApi {
     suspend fun registerStream(@Body registerStreamCommand: RegisterStreamCommand): Stream
 
     @DELETE("v1/streams/{streamId}")
-    suspend fun deleteStream(@Path("streamId") streamId: String): Unit?
+    suspend fun deleteStream(@Path("streamId") streamId: String): Response<Unit>
 }
