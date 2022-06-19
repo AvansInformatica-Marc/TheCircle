@@ -5,3 +5,27 @@ video {
     max-width: 600px;
     background-color: #000000;
 }
+
+.stream-container {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 60% 40%;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    overflow: hidden;
+
+    .stream {
+        height: 100%;
+        width: 100%;
+        grid-area: 1 / 1 / span 1 / span 1;
+        overflow-y: auto;
+    }
+
+    .chat {
+        height: 100%;
+        width: 100%;
+        grid-area: 1 / 2 / span 1 / span 1;
+        overflow: hidden;
+    }
+}

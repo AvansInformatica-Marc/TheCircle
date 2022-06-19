@@ -1,14 +1,18 @@
-<div *ngFor="let message of messages">
-    <p><strong>{{ names.get(message.senderId) }}</strong></p>
-    <p>{{ message.message }}</p>
-    <p><em>Sent at {{ message.creationDate | date:"medium" }}</em></p>
-    <hr>
-</div>
+<section class="chat-container">
+    <section class="message-list">
+        <div *ngFor="let message of messages">
+            <p><strong>{{ names.get(message.senderId) }}</strong></p>
+            <p>{{ message.message }}</p>
+            <p><em>Sent at {{ message.creationDate | date:"medium" }}</em></p>
+            <hr>
+        </div>
+    </section>
 
-<mat-form-field class="send-chat-message" appearance="fill">
-    <mat-label>Send message</mat-label>
-    <input matInput type="text" [(ngModel)]="message">
-    <button *ngIf="message" matSuffix mat-icon-button aria-label="Send" (click)="sendMessage()">
-        <mat-icon>send</mat-icon>
-    </button>
-</mat-form-field>
+    <mat-form-field class="send-message" appearance="fill">
+        <mat-label>Send message</mat-label>
+        <input matInput type="text" [(ngModel)]="message">
+        <button *ngIf="message" matSuffix mat-icon-button aria-label="Send" (click)="sendMessage()">
+            <mat-icon>send</mat-icon>
+        </button>
+    </mat-form-field>
+</section>
