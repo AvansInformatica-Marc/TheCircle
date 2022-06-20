@@ -26,4 +26,8 @@ export class UserReadDto {
     @ApiProperty()
     @IsString()
     userSignature: string
+
+    @ApiProperty()
+    @IsString()
+    serverSignature: string
 }

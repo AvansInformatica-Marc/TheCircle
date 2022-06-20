@@ -25,4 +25,8 @@ export class MessageReadDto {
     @ApiProperty()
     @IsString()
     senderSignature: string
+
+    @ApiProperty()
+    @IsString()
+    serverSignature: string
 }

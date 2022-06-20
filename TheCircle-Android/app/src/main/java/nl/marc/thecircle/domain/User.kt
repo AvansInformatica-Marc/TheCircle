@@ -10,5 +10,8 @@ data class User(
     val name: String,
     @Serializable(with = DateSerializer::class)
     val creationDate: Date,
-    val publicKey: String
+    val publicKey: String,
+    val certificate: String?,
+    val userSignature: String,
+    val serverSignature: String
 )

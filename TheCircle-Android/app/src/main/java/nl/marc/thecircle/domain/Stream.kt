@@ -13,5 +13,6 @@ data class Stream(
     val rtspUrl: String,
     @Serializable(with = DateSerializer::class)
     val creationDate: Date,
-    val userSignature: String
+    val userSignature: String,
+    val serverSignature: String
 )

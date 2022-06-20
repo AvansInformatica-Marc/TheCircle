@@ -12,5 +12,6 @@ data class Message(
     val message: String,
     @Serializable(with = DateSerializer::class)
     val creationDate: Date,
-    val senderSignature: String
+    val senderSignature: String,
+    val serverSignature: String
 )

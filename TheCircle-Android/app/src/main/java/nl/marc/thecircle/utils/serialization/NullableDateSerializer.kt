@@ -7,8 +7,6 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import nl.marc.thecircle.utils.serialization.JsonDateTime
-import nl.marc.thecircle.utils.serialization.decodeDateOrNull
 import java.util.*
 
 @ExperimentalSerializationApi

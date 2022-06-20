@@ -1,7 +1,7 @@
 package nl.marc.thecircle
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import nl.marc.thecircle.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

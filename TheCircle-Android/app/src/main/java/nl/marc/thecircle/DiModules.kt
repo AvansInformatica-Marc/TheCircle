@@ -50,15 +50,19 @@ object DiModules {
         }
 
         single {
-            UserRepository(get(), get())
+            SignatureService(get<Context>().resources, get())
         }
 
         single {
-            StreamRepository(get(), get())
+            UserRepository(get(), get(), get())
         }
 
         single {
-            ChatRepository(get(), get())
+            StreamRepository(get(), get(), get())
+        }
+
+        single {
+            ChatRepository(get(), get(), get())
         }
     }
 
