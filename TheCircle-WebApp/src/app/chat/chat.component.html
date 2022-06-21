@@ -8,11 +8,15 @@
         </div>
     </section>
 
-    <mat-form-field class="send-message" appearance="fill">
+    <mat-form-field *ngIf="isRegistered" class="send-message" appearance="fill">
         <mat-label>Send message</mat-label>
         <input matInput type="text" [(ngModel)]="message">
         <button *ngIf="message" matSuffix mat-icon-button aria-label="Send" (click)="sendMessage()">
             <mat-icon>send</mat-icon>
         </button>
     </mat-form-field>
+
+    <button *ngIf="!isRegistered" matSuffix mat-raised-button color="accent" aria-label="Register" routerLink="/register">
+        Register
+    </button>
 </section>

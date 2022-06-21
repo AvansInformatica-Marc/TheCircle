@@ -20,6 +20,8 @@ export class ChatComponent implements OnInit {
 
     message = ""
 
+    isRegistered = !!localStorage["userId"]
+
     constructor(
         private readonly usersService: UsersService,
         private readonly chatService: ChatService
@@ -49,14 +51,10 @@ export class ChatComponent implements OnInit {
         })
     }
 
-    sendMessage() {
+    async sendMessage() {
         const tmpMessage = this.message
-        this.message = ""
-        this.chatService.sendMessage({
-            chatId: this.userId,
-            senderId: "a1952b62-4f3f-452b-8322-538b5ad0c2af",
-            message: tmpMessage
-        }).subscribe({
+        this.message = "";
+        (await this.chatService.sendMessage(this.userId, tmpMessage)).subscribe({
             next: _ => this.updateMessages()
         })
     }

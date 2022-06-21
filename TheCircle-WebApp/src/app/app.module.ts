@@ -17,13 +17,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { StreamComponent } from './streaming/stream.component';
 import { ChatComponent } from './chat/chat.component';
 import { FormsModule } from '@angular/forms';
+import { RegisterComponent } from './users/register.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     StreamListComponent,
     StreamComponent,
-    ChatComponent
+    ChatComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
