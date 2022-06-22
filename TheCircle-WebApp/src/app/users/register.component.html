@@ -1,0 +1,8 @@
+<mat-form-field appearance="fill">
+    <mat-label>Username</mat-label>
+    <input matInput type="text" [(ngModel)]="username">
+</mat-form-field>
+
+<button *ngIf="username" [disabled]="loading" matSuffix mat-raised-button color="accent" aria-label="Register" (click)="register()">
+    Register
+</button>

@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">The Circle</string>
     <string name="permissions_explaination">The Circle requires camera &amp; microphone permissions</string>
+    <string name="username">Username</string>
+    <string name="sign_up">Sign up</string>
+    <string name="send_message">Send message</string>
+    <string name="you">You</string>
 </resources>

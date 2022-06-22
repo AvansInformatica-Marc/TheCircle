@@ -1,4 +1,4 @@
-package nl.marc.thecircle.data.api
+package nl.marc.thecircle.domain
 
 import kotlinx.serialization.Serializable
 import nl.marc.thecircle.utils.serialization.DateSerializer
@@ -13,5 +13,6 @@ data class Stream(
     val rtspUrl: String,
     @Serializable(with = DateSerializer::class)
     val creationDate: Date,
-    val userSignature: String
+    val userSignature: String,
+    val serverSignature: String
 )

@@ -1,19 +1,18 @@
 package nl.marc.thecircle.ui.streaming
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Lifecycle
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import nl.marc.thecircle.R
 import nl.marc.thecircle.databinding.FragmentStreamingBinding
+import nl.marc.thecircle.utils.observe
 import nl.marc_apps.streamer.camera_streamer.Camera1Emitter
 import nl.marc_apps.streamer.camera_streamer.Camera2Emitter
 import nl.marc_apps.streamer.camera_streamer.CameraEmitter
@@ -39,28 +38,46 @@ class StreamingFragment : Fragment(), SurfaceHolder.Callback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.videoView.holder.addCallback(this)
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.rtspClient.collect {
-                    setupStream()
+        binding.videoView.setOnClickListener {
+            camera?.switchCamera()
+        }
+
+        binding.actionSend.setOnClickListener {
+            binding.inputMessage.editText?.text?.toString()?.let {
+                if (it.isNotBlank()) {
+                    viewModel.sendMessage(it)
                 }
+            }
+            binding.inputMessage.editText?.setText("")
+        }
+
+        viewModel.currentUserId.observe(viewLifecycleOwner) {
+            if (it != null) {
+                val chatAdapter = ChatAdapter(it)
+                binding.listMessages.adapter = chatAdapter
             }
         }
 
+        viewModel.messageList.observe(viewLifecycleOwner) {
+            val adapter = binding.listMessages.adapter as? ChatAdapter
+            adapter?.submitList(it.toList())
+        }
+
+        viewModel.rtspClient.observe(viewLifecycleOwner) {
+            setupStream()
+        }
+
         viewModel.registerStream()
+        viewModel.loadChat()
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
-
         lifecycleScope.launch {
             camera?.stopStream()
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
         viewModel.close()
+
+        super.onDestroyView()
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {}
@@ -95,9 +112,11 @@ class StreamingFragment : Fragment(), SurfaceHolder.Callback {
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
         surfaceAvailable = false
+
         lifecycleScope.launch {
             camera?.stopStream()
         }
+        viewModel.close()
     }
 
     private fun setupCamera2(rtspClient: RtspClient): Boolean {

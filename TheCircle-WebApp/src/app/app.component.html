@@ -1,11 +1,13 @@
-<header>
-    <mat-toolbar color="primary" class="mat-elevation-z2">
-        <span routerLink="/">The Circle</span>
-        <span class="fill-space-horizontal"></span>
-        <span *ngIf="timestamp">{{ timestamp }}</span>
-    </mat-toolbar>
-</header>
+<div class="root-container">
+    <header>
+        <mat-toolbar color="primary" class="mat-elevation-z2">
+            <span routerLink="/">The Circle</span>
+            <span class="fill-space-horizontal"></span>
+            <span *ngIf="timestamp">Build {{ timestamp | date:'short' }}</span>
+        </mat-toolbar>
+    </header>
 
-<main>
-    <router-outlet></router-outlet>
-</main>
+    <main>
+        <router-outlet></router-outlet>
+    </main>
+</div>

@@ -10,10 +10,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import nl.marc.thecircle.R
 import nl.marc.thecircle.databinding.FragmentPermissionsBinding
+import nl.marc.thecircle.utils.observe
+import org.koin.androidx.navigation.koinNavGraphViewModel
 
 class PermissionsFragment : Fragment() {
     private lateinit var binding: FragmentPermissionsBinding
+
+    private val viewModel by koinNavGraphViewModel<PermissionsViewModel>(R.id.permissions_fragment)
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -46,6 +51,7 @@ class PermissionsFragment : Fragment() {
             onPermissionsGranted()
         } else {
             requestPermissionLauncher.launch(arrayOf(
+                Manifest.permission.INTERNET,
                 Manifest.permission.CAMERA,
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.READ_EXTERNAL_STORAGE
@@ -54,6 +60,12 @@ class PermissionsFragment : Fragment() {
     }
 
     private fun onPermissionsGranted() {
-        findNavController().navigate(PermissionsFragmentDirections.fragmentPermissionsToStreaming())
+        viewModel.hasSignedUp.observe(viewLifecycleOwner) {
+            when (it) {
+                true -> findNavController().navigate(PermissionsFragmentDirections.fragmentPermissionsToStreaming())
+                false -> findNavController().navigate(PermissionsFragmentDirections.fragmentPermissionsToSignup())
+                null -> {}
+            }
+        }
     }
 }

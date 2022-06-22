@@ -12,9 +12,29 @@
         tools:layout="@layout/fragment_permissions">
 
         <action
+            android:id="@+id/fragment_permissions_to_signup"
+            app:destination="@id/signup_fragment"
+            app:popUpTo="@id/permissions_fragment"
+            app:popUpToInclusive="true" />
+
+        <action
             android:id="@+id/fragment_permissions_to_streaming"
             app:destination="@id/streaming_fragment"
             app:popUpTo="@id/permissions_fragment"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/signup_fragment"
+        android:name="nl.marc.thecircle.ui.setup.SignUpFragment"
+        android:label="Sign up"
+        tools:layout="@layout/fragment_signup">
+
+        <action
+            android:id="@+id/fragment_signup_to_streaming"
+            app:destination="@id/streaming_fragment"
+            app:popUpTo="@id/signup_fragment"
             app:popUpToInclusive="true" />
 
     </fragment>

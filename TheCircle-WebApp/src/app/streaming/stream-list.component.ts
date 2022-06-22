@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { mergeMap, map, concatMap } from 'rxjs';
-import { User } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { Stream } from './stream.entity';
 import { StreamsService } from './streams.service';
@@ -13,7 +11,9 @@ import { StreamsService } from './streams.service';
 export class StreamListComponent implements OnInit {
     public isLoading: boolean = true
 
-    public streams: [Stream, User][] = []
+    public streams: Stream[] = []
+
+    names = new Map<string, string>()
 
     constructor(
         private streamsService: StreamsService,
@@ -24,11 +24,12 @@ export class StreamListComponent implements OnInit {
         this.streamsService.getStreams().subscribe({
             next: streams => {
                 this.isLoading = false
-                this.streams = []
+                this.streams = streams
                 for (const stream of streams) {
+                    this.names.set(stream.userId, stream.userId)
                     this.usersService.getUserById(stream.userId).subscribe({
                         next: user => {
-                            this.streams.push([stream, user])
+                            this.names.set(stream.userId, user.name)
                         }
                     })
                 }

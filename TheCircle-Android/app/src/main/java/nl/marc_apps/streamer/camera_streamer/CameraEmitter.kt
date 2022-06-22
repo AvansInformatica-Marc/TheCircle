@@ -6,4 +6,6 @@ interface CameraEmitter {
     fun stopStream()
 
     fun startPreview()
+
+    fun switchCamera()
 }

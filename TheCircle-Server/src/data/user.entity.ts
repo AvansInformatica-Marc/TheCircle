@@ -1,5 +1,5 @@
-import { IsDateString, IsString, IsUUID } from "class-validator"
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { IsDateString, IsOptional, IsString, IsUUID } from "class-validator"
+import { Column, CreateDateColumn, Entity, IsNull, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity()
 export class UserEntity {
@@ -21,6 +21,11 @@ export class UserEntity {
     @Column()
     @IsString()
     publicKey: string
+
+    @Column({ nullable: true })
+    @IsOptional()
+    @IsString()
+    certificate?: string
 
     @Column()
     @IsString()

@@ -1,11 +1,12 @@
 import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, ParseUUIDPipe, Post, ValidationPipe } from "@nestjs/common";
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
-import { STATUS_CODES } from "node:http";
 import { validationOptions } from "src/app.constants";
 import { StreamEntity } from "src/data/stream.entity";
 import { StreamService } from "src/data/stream.service";
 import { StreamAddDto } from "./stream-add.dto";
 import { StreamReadDto } from "./stream-read.dto";
+import * as crypto from "node:crypto"
+import { promises as fs } from "node:fs"
 
 @ApiTags("streams")
 @Controller({
@@ -21,7 +22,7 @@ export class StreamController {
     @ApiOkResponse({ type: [StreamReadDto] })
     async getAllStreams(): Promise<StreamReadDto[]> {
         const streams = await this.streamService.getAllStreams()
-        return streams.map(stream => this.mapStreamEntityToReadDto(stream))
+        return await Promise.all(streams.map(stream => this.mapStreamEntityToReadDto(stream)))
     }
 
     @Get(":streamId")
@@ -37,7 +38,7 @@ export class StreamController {
             throw new NotFoundException()
         }
 
-        return this.mapStreamEntityToReadDto(stream)
+        return await this.mapStreamEntityToReadDto(stream)
     }
 
     @Post()
@@ -49,7 +50,7 @@ export class StreamController {
         const streamEntity = new StreamEntity()
         streamEntity.userId = streamAddDto.userId
         streamEntity.userSignature = streamAddDto.userSignature
-        return this.mapStreamEntityToReadDto(await this.streamService.create(streamEntity))
+        return await this.mapStreamEntityToReadDto(await this.streamService.create(streamEntity))
     }
 
     @Delete(":streamId")
@@ -62,11 +63,11 @@ export class StreamController {
         await this.streamService.delete(streamId)
     }
 
-    mapStreamEntityToReadDto(entity: StreamEntity): StreamReadDto {
+    private async mapStreamEntityToReadDto(entity: StreamEntity): Promise<StreamReadDto> {
         const stream = new StreamReadDto()
         stream.userId = entity.userId
         stream.streamId = entity.streamId
-        stream.creationDate = entity.creationDate
+        stream.creationDate = new Date(entity.creationDate).toISOString()
         stream.userSignature = entity.userSignature
         const streamHost = process.env["STREAM_HOST"] ?? "127.0.0.1"
         const rtspPort = process.env["STREAM_RTSP_PORT"] ?? "554"
@@ -74,6 +75,15 @@ export class StreamController {
         stream.rtspUrl = `rtsp://${streamHost}:${rtspPort}/${entity.streamId}`
         stream.hlsEmbedUrl = `http://${streamHost}:${hlsPort}/${entity.streamId}`
         stream.hlsPlaylistUrl= `http://${streamHost}:${hlsPort}/${entity.streamId}/index.m3u8`
+
+        const message = `userId:${stream.userId};streamId:${stream.streamId};creationDate:${stream.creationDate};` +
+            `rtspUrl:${stream.rtspUrl};hlsEmbedUrl:${stream.hlsEmbedUrl};hlsPlaylistUrl:${stream.hlsPlaylistUrl};` +
+            `userSignature:${stream.userSignature};`
+        const signer = crypto.createSign('RSA-SHA512')
+        signer.write(message)
+        signer.end()
+        stream.serverSignature = signer.sign(await fs.readFile("server.key.pem"), 'base64')
+
         return stream
     }
 }

@@ -11,26 +11,34 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
 import { StreamListComponent } from './streaming/stream-list.component';
 import { HttpClientModule } from '@angular/common/http';
 import { StreamComponent } from './streaming/stream.component';
+import { ChatComponent } from './chat/chat.component';
+import { FormsModule } from '@angular/forms';
+import { RegisterComponent } from './users/register.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     StreamListComponent,
-    StreamComponent
+    StreamComponent,
+    ChatComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
+    FormsModule,
     BrowserAnimationsModule,
     MatIconModule,
     MatToolbarModule,
     MatProgressSpinnerModule,
     MatButtonModule,
     MatCardModule,
+    MatInputModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       // Register the ServiceWorker as soon as the application is stable
